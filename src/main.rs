@@ -30,6 +30,18 @@ fn main() {
 
 fn parse_resume(r: &Resume) -> String {
     let work: Vec<String> = r.work.clone().into_iter().map(|w| w.to_string()).collect();
+    let skills: Vec<String> = r
+        .skills
+        .clone()
+        .into_iter()
+        .map(|w| w.to_string())
+        .collect();
+    let education: Vec<String> = r
+        .education
+        .clone()
+        .into_iter()
+        .map(|e| e.to_string())
+        .collect();
 
     format!(
         r#"<!DOCTYPE html>
@@ -65,12 +77,18 @@ fn parse_resume(r: &Resume) -> String {
         text-decoration: underline
     }}
 
-    /*html, body {{ width: 100%; height: 100% }} */
     body {{
+        background-color: #f2f2f2;
         padding: 2rem;
-        padding-bottom: 0;
         max-width: 70rem;
         margin: 0 auto;
+    }}
+
+    main {{
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: .25rem;
+        box-shadow: 0 .25rem .375rem -.0625rem rgba(0, 0, 0, 0.1), 0 .125rem .25rem -.0625rem rgba(0, 0, 0, 0.06);
     }}
 
     h1, h2, h3, h4, h5, h6 {{ margin: 0; }}
@@ -82,10 +100,6 @@ fn parse_resume(r: &Resume) -> String {
         list-style-position: inside;
         padding-left: .5rem;
     }}
-
-    /*li {{
-        margin: .5rem 0;
-    }}*/
 
     hr {{
         width: 33%;
@@ -134,9 +148,10 @@ fn parse_resume(r: &Resume) -> String {
     }}
 
     .spaced-section {{
-        /* margin-left: calc(11.25rem + 2rem); */
         margin-bottom: 2rem;
     }}
+
+    .spaced-section:last-of-type {{ margin-bottom: 0; }}
 
     .w-auto {{
         width: auto;
@@ -148,25 +163,106 @@ fn parse_resume(r: &Resume) -> String {
 
     .m-y-2 {{ margin: 1rem 0; }}
     .m-0 {{ margin: 0; }}
+    .m-b-0 {{ margin-bottom: 0; }}
     .m-b-1 {{ margin-bottom: 1rem; }}
 
     .job {{ margin-top: 1rem; }}
     .job li {{ line-height: 1.75; }}
+
+    .skills {{}}
+    .skills ul {{
+        margin-left: -.25rem;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }}
+    .skills li {{
+        flex-shrink: 0;
+        background-color: dimgrey;
+        color: #fff;
+        margin: .25rem;
+        padding: .25rem .75rem;
+        border-radius: 1.5rem;
+        font-size: .75rem;
+    }}
+    .print-only {{ display: none; }}
+    @media print {{
+        li.print-only {{ display: list-item; }}
+    }}
+
+    @media print {{
+        :root {{ color: black; font-size: 90%; }}
+        body {{
+            background-color: #fff;
+            padding: 0;
+            margin: 0 auto;
+        }}
+
+        main {{
+            background-color: #fff;
+            padding: 0;
+            box-shadow: none;
+        }}
+        a {{ color: black }}
+        .basics {{ margin-bottom: 1rem; }}
+        .basics img {{ display: none; }}
+
+        .info ul {{
+            list-style: none;
+            display: flex;
+        }}
+        .info li::after {{
+            content: '\0020\2022\0020';
+            white-space: pre;
+            font-weight: 500;
+        }}
+        .info li:last-child::after {{ content: '' }}
+        .job li {{ line-height: 1.4; }}
+        .skills ul {{
+            margin-left: 0;
+        }}
+        .skills li {{
+            background-color: transparent;
+            color: black;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+            font-size: 1rem;
+        }}
+        .skills li::after {{ white-space:pre; content: ',\0020' }}
+        .skills li:last-child::after {{ content: '.' }}
+    }}
+
     </style>
 </head>
 
 <body itemscope="itemscope" itemtype="http://schema.org/Person">
-    {}
-    <section class="spaced-section profiles">
-        <h2>Work History</h2>
-        <hr />
+    <main>
         {}
-    </section>
+        <section class="spaced-section work">
+            <h2>Work History</h2>
+            <hr />
+            {}
+        </section>
+        <section class="spaced-section skills">
+            <h2>Skills</h2>
+            <hr />
+            {}
+        </section>
+        <section class="spaced-section education">
+            <h2>Education</h2>
+            <hr />
+            {}
+        </section>
+    </main>
 </body>
-
 </html>"#,
         r.basics.name,
         r.basics.to_string(),
-        work.join(r#"<hr class="w-auto m-y-2 border-light"/>"#)
+        work.join(r#"<hr class="w-auto m-y-2 border-light"/>"#),
+        skills.join(r#"<hr class="w-auto m-y-2 border-light"/>"#),
+        education.join(r#"<hr class="w-auto m-y-2 border-light"/>"#),
     )
 }

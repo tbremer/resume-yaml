@@ -24,8 +24,14 @@ pub struct Basics {
     profiles: Vec<Profile>,
 }
 
-fn generate_link(protocol: &str, href: String) -> String {
-    format!(r#"<a href="{}{}">{}</a>"#, protocol, href, href)
+fn generate_link(protocol: &str, href: String, classes: Vec<&str>) -> String {
+    format!(
+        r#"<a class="{}" href="{}{}">{}</a>"#,
+        classes.join(" "),
+        protocol,
+        href,
+        href
+    )
 }
 
 impl ToString for Basics {
@@ -35,10 +41,10 @@ impl ToString for Basics {
             <section class="info">
                 <h1>{} / {}</h1>
                 <address>
-                    <ul>
-                        <li>{}</li>
-                        <li>{}</li>
-                        <li>{}</li>
+                    <ul role="list">
+                        <li role="listitem">{}</li>
+                        <li role="listitem" class="print-only">{}</li>
+                        <li role="listitem">{}</li>
                     </ul>
                 </address>
             </section>
@@ -47,9 +53,9 @@ impl ToString for Basics {
             self.name,
             self.label,
             // name_heading(self.picture.clone(), self.name.clone(), self.label.clone()),
-            generate_link("mailto:", self.email.clone()),
-            generate_link("tel:", self.phone.clone()),
-            generate_link("", self.website.clone()),
+            generate_link("mailto:", self.email.clone(), vec![]),
+            generate_link("tel:", self.phone.clone(), vec![]),
+            generate_link("", self.website.clone(), vec![]),
             self.picture,
         );
 
