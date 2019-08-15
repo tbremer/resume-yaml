@@ -15,11 +15,11 @@ pub struct Location {
 pub struct Basics {
     pub name: String,
     label: String,
-    picture: String,
+    pub picture: String,
     email: String,
     phone: String,
     website: String,
-    summary: String,
+    pub summary: String,
     location: Location,
     profiles: Vec<Profile>,
 }
@@ -48,7 +48,7 @@ impl ToString for Basics {
                     </ul>
                 </address>
             </section>
-            <img src="{}" />
+            <img src="{}" alt="Photograph of {}." />
     "#,
             self.name,
             self.label,
@@ -57,6 +57,7 @@ impl ToString for Basics {
             generate_link("tel:", self.phone.clone(), vec![]),
             generate_link("", self.website.clone(), vec![]),
             self.picture,
+            self.name,
         );
 
         let profiles: Vec<String> = self

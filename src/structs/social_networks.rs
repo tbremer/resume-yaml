@@ -8,6 +8,16 @@ pub enum Network {
     CodePen,
 }
 
+impl Network {
+    pub fn to_url(&self) -> String {
+        match self {
+            Network::GitHub => String::from("https://github.com/"),
+            Network::Twitter => String::from("https://twitter.com/"),
+            Network::CodePen => String::from("https://codepen.io/"),
+        }
+    }
+}
+
 impl ToString for Network {
     fn to_string(&self) -> String {
         match self {
@@ -27,11 +37,11 @@ pub struct Profile {
 impl ToString for Profile {
     fn to_string(&self) -> String {
         format!(
-            r#"<a href="https://{}.com/{}">{} / {}</a>"#,
-            self.network.to_string(),
+            r#"<a href="{}{}">{} / {}</a>"#,
+            self.network.to_url(),
             self.username,
             self.network.to_string(),
-            self.username
+            self.username,
         )
     }
 }
