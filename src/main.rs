@@ -7,7 +7,7 @@ use serde_yaml;
 use std::{fs::File, io::prelude::*, process::exit};
 
 fn main() {
-    let theme_base = color_converter::hex_to_hsl("#805AD5");
+    let _theme_base = color_converter::hex_to_hsl("#805AD5");
     let args = arg_parser::parse();
     let str = match args.get("path") {
         Some(p) => std::fs::read_to_string(p).unwrap(),
@@ -15,8 +15,6 @@ fn main() {
     };
     let yml_string: structs::Resume = serde_yaml::from_str(&str).unwrap();
     let output: String = parser::parse_resume(&yml_string);
-
-    println!("Theme: {:?}", theme_base);
 
     match args.get("output") {
         Some(file_path) => {

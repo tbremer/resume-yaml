@@ -1,11 +1,65 @@
 type RGB = (u16, u16, u16);
 type HSL = (u16, u16, u16);
 
+fn percent_change(ov: f32, change: f32) -> f32 {
+    ov + ov * (change / 100.)
+}
+
+fn clamp(num: f32, max: f32) -> f32 {
+    if num > max {
+        max
+    } else if num < 0. {
+        0.
+    } else {
+        num
+    }
+}
+
 #[derive(Debug)]
 pub struct Colors {
     pub hex: String,
     pub rgb: RGB,
     pub hsl: HSL,
+}
+
+impl Colors {
+    //color name | hue | saturation | luminace
+    //---------------------------------
+    // base      | 259 | 59         | 59
+    //---------------------------------
+    // dark      | 258 | 24         | 20
+    //           |     | -60%       | -66%
+    //---------------------------------
+    // light     | 270 | 100        | 98
+    //                 | 60%        | +66%
+    //---------------------------------
+    pub fn adjust_saturation(&self, change: i8) -> Colors {
+        let (h, orignal_value, lum) = self.hsl;
+
+        let new_value = clamp(percent_change(orignal_value as f32, change as f32), 100.).round();
+        let hsl = (h, new_value as u16, lum);
+        let rgb = hsl_to_rgb(hsl);
+
+        Colors {
+            hex: rgb_to_hex(rgb),
+            rgb,
+            hsl,
+        }
+    }
+
+    pub fn adjust_luminance(&self, change: i8) -> Colors {
+        let (h, s, orignal_value) = self.hsl;
+        let new_value = clamp(percent_change(orignal_value as f32, change as f32), 100.).round();
+
+        let hsl = (h, s, new_value as u16);
+        let rgb = hsl_to_rgb(hsl);
+
+        Colors {
+            hex: rgb_to_hex(rgb),
+            rgb,
+            hsl,
+        }
+    }
 }
 
 fn hex_to_decimal(hex_pair: &str) -> u16 {
@@ -48,6 +102,41 @@ fn hex_to_rgb(hex: &str) -> RGB {
     )
 }
 
+fn rgb_to_hex((r,g, b): RGB) -> String {
+    let mut r_hex = format!("{:X}", r);
+    let mut g_hex = format!("{:X}", g);
+    let mut b_hex = format!("{:X}", b);
+
+    if r_hex.len() == 1 {
+        if r < 16 {
+            r_hex = format!("0{}", r_hex);
+        }
+        else {
+            r_hex = format!("{}0", r_hex);
+        };
+    };
+
+    if g_hex.len() == 1 {
+        if g < 16 {
+            g_hex = format!("0{}", g_hex);
+        }
+        else {
+            g_hex = format!("{}0", g_hex);
+        };
+    };
+
+    if b_hex.len() == 1 {
+        if b < 16 {
+            b_hex = format!("0{}", b_hex);
+        }
+        else {
+            b_hex = format!("{}0", b_hex);
+        };
+    };
+
+    format!("#{}{}{}",r_hex, g_hex, b_hex)
+}
+
 fn rgb_to_hsl((r, g, b): RGB) -> HSL {
     use std::f32::{MAX, MIN};
 
@@ -86,6 +175,45 @@ fn rgb_to_hsl((r, g, b): RGB) -> HSL {
         hue.round() as u16,
         ((saturation * 100.).round()) as u16,
         ((lum * 100.).round()) as u16,
+    )
+}
+
+fn generate_temp_color(color: f32, lum_temp: f32, derived_temp: f32) -> f32 {
+    if 6. * color < 1. {
+        derived_temp + (lum_temp - derived_temp) * 6. * color
+    }
+    else if 2. * color < 1. {
+        lum_temp
+    }
+    else if 3. * color < 2. {
+        derived_temp + (lum_temp - derived_temp) * (0.666 - color) * 6.
+    }
+    else {
+        derived_temp
+    }
+}
+
+fn hsl_to_rgb((h,s,l): HSL) -> RGB {
+    let hue = h as f32 / 360.;
+    let sat = s as f32 / 100.;
+    let lum = l as f32 / 100.;
+
+    let lum_temp = if lum < 0.5 {
+        lum * (1. + sat)
+    }
+    else {
+        lum + sat - lum * sat
+    };
+    let derived_temp = 2. * lum - lum_temp;
+
+    let r_channel = generate_temp_color(hue + 0.333, lum_temp, derived_temp);
+    let g_channel = generate_temp_color(hue.clone(), lum_temp, derived_temp);
+    let b_channel = generate_temp_color(hue - 0.333, lum_temp, derived_temp);
+
+    (
+        clamp((r_channel*255.).round(), 255.) as u16,
+        clamp((g_channel*255.).round(), 255.) as u16,
+        clamp((b_channel*255.).round(), 255.) as u16,
     )
 }
 
