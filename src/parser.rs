@@ -1,3 +1,4 @@
+use std::string::ToString;
 use super::structs::Resume;
 
 fn build_meta(r: &Resume) -> String {
@@ -30,21 +31,18 @@ fn build_meta(r: &Resume) -> String {
     )
 }
 
+fn collect<T: ToString>(item: &Option<Vec<T>>) -> Vec<String> {
+    match &item {
+        None => vec![],
+        Some(work) => work.clone().into_iter().map(|w| w.to_string()).collect()
+    }
+}
+
 
 pub fn parse_resume(r: &Resume) -> String {
-    let work: Vec<String> = r.work.clone().into_iter().map(|w| w.to_string()).collect();
-    let skills: Vec<String> = r
-        .skills
-        .clone()
-        .into_iter()
-        .map(|w| w.to_string())
-        .collect();
-    let education: Vec<String> = r
-        .education
-        .clone()
-        .into_iter()
-        .map(|e| e.to_string())
-        .collect();
+    let work = collect(&r.work);
+    let skills = collect(&r.skills);
+    let education = collect(&r.education);
 
     format!(
         r#"<!DOCTYPE html>

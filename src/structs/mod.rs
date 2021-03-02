@@ -18,9 +18,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Resume {
     pub basics: General,
-    pub work: Vec<Job>,
-    pub education: Vec<Education>,
-    pub awards: Vec<Accomplishment>,
-    pub skills: Vec<Skill>,
-    pub languages: Vec<Language>,
+    pub work: Option<Vec<Job>>,
+    pub education: Option<Vec<Education>>,
+    pub awards: Option<Vec<Accomplishment>>,
+    pub skills: Option<Vec<Skill>>,
+    pub languages: Option<Vec<Language>>,
 }
