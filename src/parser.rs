@@ -1,5 +1,5 @@
-use std::string::ToString;
 use super::structs::Resume;
+use std::string::ToString;
 
 fn build_meta(r: &Resume) -> String {
     format!(
@@ -34,10 +34,9 @@ fn build_meta(r: &Resume) -> String {
 fn collect<T: ToString>(item: &Option<Vec<T>>) -> Vec<String> {
     match &item {
         None => vec![],
-        Some(work) => work.clone().into_iter().map(|w| w.to_string()).collect()
+        Some(work) => work.clone().into_iter().map(|w| w.to_string()).collect(),
     }
 }
-
 
 pub fn parse_resume(r: &Resume) -> String {
     let work = collect(&r.work);
@@ -53,14 +52,13 @@ pub fn parse_resume(r: &Resume) -> String {
 
     <title>{} Resume</title>
 
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
-    <link rel="stylesheet" type="text/css" href="https://rsms.me/inter/inter.css">
     <style>
     :root {{
-        font-family: Inter, sans-serif;
         font-size: 100%;
-        color: #16161d;
-        line-height: 1.4;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+				'Open Sans', 'Helvetica Neue', sans-serif;
+			color: #191e19;
+			line-height: 1.4;
     }}
 
     *, *::before, *::after {{
@@ -86,17 +84,19 @@ pub fn parse_resume(r: &Resume) -> String {
     main {{
         background-color: #fff;
         padding: 2rem;
-        border-radius: .25rem;
-        box-shadow: 0 .25rem .375rem -.0625rem rgba(0, 0, 0, 0.1), 0 .125rem .25rem -.0625rem rgba(0, 0, 0, 0.06);
+        border-radius: 0.25rem;
+        box-shadow: 0 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),
+            0 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06);
     }}
 
-    h1, h2, h3, h4, h5, h6 {{ margin: 0; }}
+    h1, h2, h3, h4, h5, h6 {{ font-weight: bold; margin: 0; }}
+    h1 {{ font-size: 2em; margin: 0.5rem 0; }}
     h2 {{ font-size: 1.25em; }}
     h3 {{ font-size: 1.125em; font-weight: 500; }}
 
     ul {{
         padding: 0;
-        list-style-position: inside;
+        list-style: inside disc;
         padding-left: .5rem;
     }}
 
@@ -104,6 +104,7 @@ pub fn parse_resume(r: &Resume) -> String {
         width: 33%;
         min-width: 15rem;
         margin: .5rem 0;
+        border-style: inset;
     }}
 
     .basics {{
