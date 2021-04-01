@@ -6,6 +6,7 @@ pub enum Network {
     GitHub,
     Twitter,
     CodePen,
+    LinkedIn,
 }
 
 impl Network {
@@ -14,6 +15,7 @@ impl Network {
             Network::GitHub => String::from("https://github.com/"),
             Network::Twitter => String::from("https://twitter.com/"),
             Network::CodePen => String::from("https://codepen.io/"),
+            Network::LinkedIn => String::from("https://www.linkedin.com/in/"),
         }
     }
 }
@@ -24,6 +26,7 @@ impl ToString for Network {
             Network::GitHub => String::from("github"),
             Network::Twitter => String::from("twitter"),
             Network::CodePen => String::from("codepen"),
+            Network::LinkedIn => String::from("linkedin"),
         }
     }
 }
