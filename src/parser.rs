@@ -127,10 +127,11 @@ pub fn parse_resume(r: &Resume) -> String {
     }}
 
     @media screen and (max-width: 700px) {{
-        body {{ padding: 1rem; padding-bottom: 0; }}
+        body {{ padding: .5rem; padding-bottom: 0; }}
+        main {{ padding: 1rem; }}
         .basics {{
-            flex-direction: column;
             align-items: flex-start;
+            gap: 1rem;
         }}
 
         .basics img {{
@@ -141,6 +142,10 @@ pub fn parse_resume(r: &Resume) -> String {
         .info h1 {{
             font-size: 1.75rem
         }}
+    }}
+
+    @media screen and (max-width: 480px) {{
+        .basics {{ flex-direction: column; }}
     }}
 
     .basics .info h2 {{
